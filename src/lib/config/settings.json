@@ -1,0 +1,19 @@
+{
+	"isLive": true,
+	"hackathonName": "HackPSU Fall 2026",
+	"hackathonDate": "2026-10-24T11:00:00-04:00",
+	"hackathonEndDate": "2026-10-25T10:00:00-04:00",
+	"hackathonDateRepr": "October 24–25, 2026",
+	"venue": {
+		"name": "ECoRE Building",
+		"address": "Engineering Collaborative Research & Education, University Park, PA 16802",
+		"directionsUrl": "https://maps.google.com/?q=ECoRE+Building+Penn+State"
+	},
+	"wifi": "psu-guest",
+	"links": {
+		"main": "https://hackpsu.org",
+		"qstack": "https://qstack.hackpsu.org",
+		"discord": "https://discord.gg/hackpsu",
+		"devpost": "https://hackpsu-fall-2026.devpost.com"
+	}
+}
