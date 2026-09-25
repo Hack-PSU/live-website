@@ -1,4 +1,4 @@
-import type { SponsorEntity } from "@/lib/api/sponsor";
+import type { SponsorEntity } from "@hackpsu/react-sdk";
 
 interface Props {
 	sponsors: SponsorEntity[];

@@ -1,14 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { DateTime } from "luxon";
-import { useQuery } from "@tanstack/react-query";
 import {
-	getActiveHackathonForStatic,
-	hackathonQueryKeys,
-	type StaticActiveHackathonEntity,
-} from "@/lib/api/hackathon";
-import type { SponsorEntity } from "@/lib/api/sponsor";
+	useHackathonGetForStatic,
+	useLocationGetAll,
+	type SponsorEntity,
+} from "@hackpsu/react-sdk";
 import { toLiveEvents, type LiveEvent } from "@/lib/events";
 import settings from "@/lib/config/settings.json";
 
@@ -36,19 +34,33 @@ export interface LiveSchedule {
 const REFRESH_MS = 60_000;
 
 /**
- * One request (`GET /hackathons/active/static`) gives the hackathon window,
- * its events, and its sponsors — everything the dashboard and schedule need.
+ * `GET /hackathons/active/static` gives the hackathon window, its events and its
+ * sponsors. Room names come from `GET /locations`, which the events reference by
+ * id; both are public, and locations change rarely enough to outlive the
+ * schedule poll.
  */
 export function useLiveSchedule(): LiveSchedule {
-	const { data, isLoading, isError } = useQuery<StaticActiveHackathonEntity>({
-		queryKey: hackathonQueryKeys.activeStatic,
-		queryFn: getActiveHackathonForStatic,
-		refetchInterval: REFRESH_MS,
+	const { data, isLoading, isError } = useHackathonGetForStatic({
+		query: { refetchInterval: REFRESH_MS },
 	});
 
+	const { data: locations } = useLocationGetAll();
+
+	const locationNames = useMemo(
+		() => new Map((locations ?? []).map((l) => [l.id, l.name])),
+		[locations]
+	);
+
+	const resolveLocation = useCallback(
+		(locationId?: number) =>
+			(locationId === undefined ? undefined : locationNames.get(locationId)) ??
+			"TBA",
+		[locationNames]
+	);
+
 	const events = useMemo(
-		() => (data?.events ? toLiveEvents(data.events) : []),
-		[data]
+		() => (data?.events ? toLiveEvents(data.events, resolveLocation) : []),
+		[data, resolveLocation]
 	);
 
 	const sponsors = useMemo(

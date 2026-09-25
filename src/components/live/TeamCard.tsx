@@ -1,14 +1,15 @@
 "use client";
 
-import { useProjectsByTeamId } from "@/lib/api/judging";
-import { useFirebase } from "@/lib/providers/FirebaseProvider";
+import { useFirebase, useProjectGetProjectsByTeam } from "@hackpsu/react-sdk";
 import { useMyTeam, memberIds } from "@/lib/hooks/use-my-team";
 import settings from "@/lib/config/settings.json";
 
 export default function TeamCard() {
 	const { isAuthenticated, user } = useFirebase();
 	const { team, isLoading, isError } = useMyTeam(user?.uid);
-	const { data: projects } = useProjectsByTeamId(team?.id ?? "");
+	const { data: projects } = useProjectGetProjectsByTeam(team?.id ?? "", {
+		query: { enabled: Boolean(team?.id) },
+	});
 	const project = projects?.[0];
 
 	return (
