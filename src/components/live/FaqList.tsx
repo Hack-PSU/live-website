@@ -1,7 +1,7 @@
 const FAQS = [
 	{
 		q: "Where do I go for help?",
-		a: "Post to the mentor queue from the dashboard, or find an organizer in an orange shirt at the Atrium desk.",
+		a: "Ask in the HackPSU Discord, or find an organizer in an orange shirt at the Atrium desk.",
 	},
 	{
 		q: "When are submissions due?",

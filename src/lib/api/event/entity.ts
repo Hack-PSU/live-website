@@ -19,6 +19,8 @@ export interface EventEntity {
 	wsSkillLevel?: string;
 	wsUrls?: string[];
 	hackathonId?: string;
+	/** Fast-pass holders skip the line for this event. */
+	fastPass: boolean;
 }
 
 export interface EventEntityResponse extends EventEntity {

@@ -17,8 +17,8 @@ export function memberIds(team: TeamEntity): string[] {
 /*
  * TODO(apiv3): there is no "my team" lookup — GET /teams/:id needs a team id,
  * and UserEntity carries no teamId. Until a GET /teams/mine (or a teamId on the
- * user) exists, we scan the team list for one containing this uid. The list
- * endpoint may also be role-gated, so callers must handle the error path.
+ * user) exists, we scan the active hackathon's teams (GET /teams, which is
+ * public) for one containing this uid.
  */
 export function useMyTeam(uid?: string) {
 	const { data, isLoading, isError } = useAllTeams();

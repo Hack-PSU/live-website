@@ -12,7 +12,6 @@
 	"wifi": "psu-guest",
 	"links": {
 		"main": "https://hackpsu.org",
-		"qstack": "https://qstack.hackpsu.org",
 		"discord": "https://discord.gg/hackpsu",
 		"devpost": "https://hackpsu-fall-2026.devpost.com"
 	}

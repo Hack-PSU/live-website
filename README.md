@@ -21,14 +21,14 @@ so the two repos stay easy to move between.
 
 | Route | What it is | Auth |
 | --- | --- | --- |
-| `/` | Dashboard — ON NOW, up next, mission clock, announcements | public |
+| `/` | Dashboard — ON NOW, up next, mission clock, announcements, sponsors | public |
 | `/schedule` | Full schedule with day tabs and category filters | public |
 | `/map` | ECoRE floor map and key spots | public |
 | `/help` | FAQ | public |
 | `/pass` | Hacker pass: QR, status, team, wallet passes | **required** |
+| `/api/announcements` | JSON proxy of the Discord announcements channel (temporary) | public |
 
-The header also links out to [QStack](https://qstack.hackpsu.org), HackPSU's
-mentor and help queue.
+The header's **Get help** link goes to the HackPSU Discord.
 
 ## Architecture
 
@@ -51,8 +51,23 @@ renders a placeholder while it's null. `useEventPhase()` turns the active
 hackathon's window into the `before` / `during` / `after` countdown state.
 
 **Data.** `useLiveSchedule()` wraps `GET /hackathons/active/static`, which
-returns the hackathon window and its events in one request. Until it resolves,
-dates fall back to `src/lib/config/settings.json`.
+returns the hackathon window, its events, and its sponsors in one request, and
+refetches every minute so schedule edits land without a reload. Until it
+resolves, dates fall back to `src/lib/config/settings.json`. The team card reads
+`GET /teams` and `GET /judging/projects/team/:teamId`; the pass reads
+`GET /users/info/me`.
+
+**Announcements.** apiv3 has no announcements feed (its notifications are
+push-only), so for now they come from the HackPSU Discord. The route handler
+`src/app/api/announcements/route.ts` calls Discord's REST API with a bot token
+(`src/lib/discord.ts`), caches the result for 30 seconds, and returns
+`AnnouncementEntity[]`. The feed polls it every minute. Along the way it strips
+`@everyone`/role pings and custom emoji, turns user mentions into names, renders
+`<t:…>` timestamps in Eastern time, and uses a leading `# Heading` or fully bold
+first line as the title. `DiscordText` renders the remaining Discord markdown
+(bold, italics, links, lists, quotes) as React elements, never raw HTML. It's the
+only part of the site that doesn't read from apiv3, and it's meant to move there
+— see [Known gaps](#known-gaps).
 
 ## Getting started
 
@@ -67,6 +82,36 @@ yarn dev
 `.env.local` needs the seven `NEXT_PUBLIC_FIREBASE_*` values, plus
 `NEXT_PUBLIC_BASE_URL_V3` (apiv3) and optionally `NEXT_PUBLIC_AUTH_SERVICE_URL`
 (defaults to `https://auth.hackpsu.org`).
+
+For announcements, also set `DISCORD_BOT_TOKEN` and
+`DISCORD_ANNOUNCEMENTS_CHANNEL_ID`. They're server-only: no `NEXT_PUBLIC_`
+prefix, so the token never reaches the browser. Set them on the host too. Without
+them `/api/announcements` returns 503 and the feed says announcements aren't
+loading, but the rest of the site works.
+
+### Setting up the Discord bot
+
+The bot never connects to Discord or runs anything: it's only a token the
+server uses to read one channel, and it shows as offline in the member list.
+Someone with **Manage Server** on the HackPSU Discord does this once:
+
+1. In the [Discord Developer Portal](https://discord.com/developers/applications),
+   create an application (e.g. "HackPSU Live"). Under **Bot**, reset the token
+   and copy it into `DISCORD_BOT_TOKEN`.
+2. On the same page, turn on **Message Content Intent**. Without it Discord
+   returns messages with empty text.
+3. Under **OAuth2 → URL Generator**, pick the `bot` scope and only the **View
+   Channels** and **Read Message History** permissions. Open the generated URL
+   and add the bot to the server.
+4. Make sure the bot's role can see the announcements channel. It needs no
+   access to anything else.
+5. Turn on Developer Mode (User Settings → Advanced), right-click the
+   announcements channel, choose **Copy Channel ID**, and put it in
+   `DISCORD_ANNOUNCEMENTS_CHANNEL_ID`.
+
+Check it with `curl localhost:3000/api/announcements` while `yarn dev` runs. A
+401 in the server log means the token is wrong; 403 means the bot can't see the
+channel; posts with empty text mean the intent is off.
 
 ## Scripts
 
@@ -86,17 +131,19 @@ Things organizers will want to edit, in one place each:
 - `src/lib/config/settings.json` — dates, venue, Wi-Fi, outbound links
 - `src/components/live/FaqList.tsx` — the `/help` questions
 - `src/components/live/FloorMap.tsx` — floors and key-spot pins
-- `src/lib/api/announcement/provider.ts` — the announcements feed
+- Announcements — post in the Discord announcements channel. Start the post
+  with `# Title` or a fully **bold** first line to give it a title on the site.
 
 ## Known gaps
 
 These are wired on the frontend and waiting on backend or asset work. Each is
 marked with a `TODO` at the relevant file.
 
-- **Announcements have no API.** apiv3's `notification` module is push-only
-  (`POST /notifications/send`, `/broadcast`) and nothing persists a readable
-  feed, so `src/lib/api/announcement/provider.ts` returns mock data. When a
-  `GET /announcements` lands, that one file is the only thing that changes.
+- **Announcements bypass apiv3.** They're proxied from Discord by this app's
+  own `/api/announcements` route as a stopgap. The plan is to move
+  `src/lib/discord.ts` into apiv3 as `GET /announcements`. Then
+  `src/lib/api/announcement/provider.ts` switches to `apiFetch`, and
+  `src/app/api/announcements/` and the `DISCORD_*` env vars here go away.
 - **No `ceremony` event type.** apiv3's `EventType` is
   `activity | food | workshop | checkIn`, but the design treats ceremonies as
   their own category. `src/lib/events.ts` recognizes them by name as a stopgap.
@@ -106,4 +153,3 @@ marked with a `TODO` at the relevant file.
   `public/floors/` and render them in `FloorMap.tsx`.
 - **Check-in time and meal counts** aren't on the pass — the data is in scans,
   but there's no per-user rollup endpoint.
-- **Mentor queue counts** are static; QStack exposes no public read endpoint.

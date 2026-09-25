@@ -15,15 +15,21 @@ export interface UserEntity {
 	country: string;
 	race?: string;
 	resume?: string;
+	linkedinUrl?: string;
 }
 
 export interface UserCreateEntity extends Omit<UserEntity, "id" | "resume"> {
 	resume?: File;
 }
 
-export interface UserInfoMe extends UserEntity {
-	registration: RegistrationEntity;
-}
+/**
+ * GET /users/info/me. `registration` is null when the user hasn't registered
+ * for the active hackathon, and the whole body is `{}` when the signed-in
+ * account has no user profile at all.
+ */
+export type UserInfoMe =
+	| (UserEntity & { registration: RegistrationEntity | null })
+	| { [K in keyof UserEntity | "registration"]?: undefined };
 
 export interface ExtraCreditClass {
 	id: number;

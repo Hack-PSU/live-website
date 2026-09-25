@@ -87,7 +87,7 @@ export interface ApiEventLike {
 	type: EventType | string;
 	startTime: number;
 	endTime: number;
-	description?: string;
+	description?: string | null;
 	location?: { name: string } | null;
 }
 
@@ -100,7 +100,7 @@ export function toLiveEvents(events: ApiEventLike[]): LiveEvent[] {
 			startTime: e.startTime,
 			endTime: e.endTime,
 			locationName: e.location?.name ?? "TBA",
-			description: e.description,
+			description: e.description ?? undefined,
 		}))
 		.sort((a, b) => a.startTime - b.startTime);
 }

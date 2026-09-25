@@ -7,6 +7,7 @@ export interface TeamEntity {
 	member4?: string;
 	member5?: string;
 	isActive: boolean;
+	hackathonId?: string;
 }
 
 export interface TeamCreateEntity extends Omit<TeamEntity, "id" | "isActive"> {}

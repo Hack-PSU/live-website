@@ -10,5 +10,6 @@ export function useAnnouncements() {
 	return useQuery<AnnouncementEntity[]>({
 		queryKey: announcementQueryKeys.all,
 		queryFn: getAnnouncements,
+		refetchInterval: 60_000,
 	});
 }
