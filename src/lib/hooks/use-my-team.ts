@@ -1,8 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useAllTeams } from "@/lib/api/team";
-import type { TeamEntity } from "@/lib/api/team";
+import { useTeamGetAll, type TeamEntity } from "@hackpsu/react-sdk";
 
 export function memberIds(team: TeamEntity): string[] {
 	return [
@@ -21,7 +20,7 @@ export function memberIds(team: TeamEntity): string[] {
  * public) for one containing this uid.
  */
 export function useMyTeam(uid?: string) {
-	const { data, isLoading, isError } = useAllTeams();
+	const { data, isLoading, isError } = useTeamGetAll();
 
 	const team = useMemo(() => {
 		if (!uid || !data) return undefined;
