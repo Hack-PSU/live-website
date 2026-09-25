@@ -40,6 +40,19 @@ export default function HackerPass() {
 		);
 	}
 
+	// A signed-in account with no user profile comes back as `{}`.
+	if (!me.id) {
+		return (
+			<p className="mt-5 text-[15px] text-slate-light">
+				No hacker profile on this account yet. Register for{" "}
+				<a href={settings.links.main} className="text-foam hover:text-ember">
+					{settings.hackathonName}
+				</a>{" "}
+				to get your pass.
+			</p>
+		);
+	}
+
 	const addToGoogleWallet = () => {
 		googlePass.mutate(me.id, {
 			onSuccess: (data) => window.open(data.walletLink, "_blank", "noopener"),

@@ -1,5 +1,6 @@
 "use client";
 
+import { useProjectsByTeamId } from "@/lib/api/judging";
 import { useFirebase } from "@/lib/providers/FirebaseProvider";
 import { useMyTeam, memberIds } from "@/lib/hooks/use-my-team";
 import settings from "@/lib/config/settings.json";
@@ -7,6 +8,8 @@ import settings from "@/lib/config/settings.json";
 export default function TeamCard() {
 	const { isAuthenticated, user } = useFirebase();
 	const { team, isLoading, isError } = useMyTeam(user?.uid);
+	const { data: projects } = useProjectsByTeamId(team?.id ?? "");
+	const project = projects?.[0];
 
 	return (
 		<div className="rounded-2xl border border-line bg-surface p-5">
@@ -28,7 +31,20 @@ export default function TeamCard() {
 					<div className="text-sm text-slate-light">
 						members in {team.name}
 						<br />
-						Devpost: not submitted
+						{project?.devpostLink ? (
+							<a
+								href={project.devpostLink}
+								target="_blank"
+								rel="noopener"
+								className="text-foam hover:text-ember"
+							>
+								Submitted: {project.name} ↗
+							</a>
+						) : project ? (
+							<>Project: {project.name}</>
+						) : (
+							"Devpost: not submitted"
+						)}
 					</div>
 				</div>
 			) : (

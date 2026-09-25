@@ -1,10 +1,10 @@
 "use client";
 
 import AnnouncementFeed from "@/components/live/AnnouncementFeed";
-import MentorQueueCard from "@/components/live/MentorQueueCard";
 import MissionClock from "@/components/live/MissionClock";
 import OnNowCard from "@/components/live/OnNowCard";
 import QuickLinks from "@/components/live/QuickLinks";
+import SponsorWall from "@/components/live/SponsorWall";
 import TeamCard from "@/components/live/TeamCard";
 import UpNextRail from "@/components/live/UpNextRail";
 import { currentEvent, upcomingEvents } from "@/lib/events";
@@ -13,7 +13,7 @@ import { useLiveSchedule } from "@/lib/hooks/use-live-schedule";
 
 export default function DashboardPage() {
 	const now = useLiveClock();
-	const { events, startTime, endTime } = useLiveSchedule();
+	const { events, sponsors, startTime, endTime, isLoading } = useLiveSchedule();
 
 	const reference = now ?? startTime;
 	const onNow = currentEvent(events, reference);
@@ -32,9 +32,12 @@ export default function DashboardPage() {
 				<AnnouncementFeed />
 				<div className="flex flex-col gap-3.5">
 					<TeamCard />
-					<MentorQueueCard />
 					<QuickLinks />
 				</div>
+			</section>
+
+			<section className="mt-10">
+				<SponsorWall sponsors={sponsors} isLoading={isLoading} />
 			</section>
 		</main>
 	);

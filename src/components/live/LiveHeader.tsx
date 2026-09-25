@@ -67,13 +67,13 @@ export default function LiveHeader() {
 					);
 				})}
 				<a
-					href={settings.links.qstack}
+					href={settings.links.discord}
 					target="_blank"
 					rel="noopener"
 					className={cn(navItemClasses(false), "border-transparent")}
 				>
 					<Hex size={11} />
-					Help queue ↗
+					Get help ↗
 				</a>
 			</nav>
 

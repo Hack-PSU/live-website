@@ -1,3 +1,6 @@
+import { EventEntity } from "../event/entity";
+import { SponsorEntity } from "../sponsor/entity";
+
 export interface HackathonEntity {
 	id: string;
 	name: string;
@@ -27,16 +30,12 @@ export interface StaticEventLocationEntity {
 	name: string;
 }
 
-export interface StaticEventEntity {
-	id: string;
-	name: string;
-	type: string;
-	startTime: number;
-	endTime: number;
-	location: StaticEventLocationEntity;
+/** Events come back as full rows, with their location joined in. */
+export interface StaticEventEntity extends Omit<EventEntity, "location"> {
+	location: StaticEventLocationEntity | null;
 }
 
 export interface StaticActiveHackathonEntity extends HackathonEntity {
 	events: StaticEventEntity[];
-	sponsors: { id: string; name: string }[];
+	sponsors: SponsorEntity[];
 }
