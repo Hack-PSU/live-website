@@ -3,11 +3,11 @@
 import Image from "next/image";
 import QRCode from "react-qr-code";
 import { toast } from "sonner";
-import { useUserInfoMe } from "@/lib/api/user";
 import {
-	useCreateWalletPass,
-	useCreateAppleWalletPass,
-} from "@/lib/api/wallet";
+	useAppleWalletCreatePass,
+	useUserGetMyInfo,
+	useWalletCreatePass,
+} from "@hackpsu/react-sdk";
 import { useMyTeam } from "@/lib/hooks/use-my-team";
 import settings from "@/lib/config/settings.json";
 
@@ -20,10 +20,16 @@ function Stat({ label, value }: { label: string; value: string }) {
 }
 
 export default function HackerPass() {
-	const { data: me, isLoading, isError } = useUserInfoMe();
+	// Retried because this fires as soon as the session resolves, and the first
+	// attempt can beat the API's view of a freshly minted token.
+	const {
+		data: me,
+		isLoading,
+		isError,
+	} = useUserGetMyInfo({ query: { retry: 2, retryDelay: 1000 } });
 	const { team } = useMyTeam(me?.id);
-	const googlePass = useCreateWalletPass();
-	const applePass = useCreateAppleWalletPass();
+	const googlePass = useWalletCreatePass();
+	const applePass = useAppleWalletCreatePass();
 
 	if (isLoading) {
 		return (
@@ -40,7 +46,8 @@ export default function HackerPass() {
 		);
 	}
 
-	// A signed-in account with no user profile comes back as `{}`.
+	// A signed-in account with no user profile comes back as `{}`, which the
+	// document does not describe: it marks `id` required. Keep the guard.
 	if (!me.id) {
 		return (
 			<p className="mt-5 text-[15px] text-slate-light">
@@ -54,24 +61,30 @@ export default function HackerPass() {
 	}
 
 	const addToGoogleWallet = () => {
-		googlePass.mutate(me.id, {
-			onSuccess: (data) => window.open(data.walletLink, "_blank", "noopener"),
-			onError: () => toast.error("Couldn't create a Google Wallet pass."),
-		});
+		googlePass.mutate(
+			{ id: me.id },
+			{
+				onSuccess: (data) => window.open(data.walletLink, "_blank", "noopener"),
+				onError: () => toast.error("Couldn't create a Google Wallet pass."),
+			}
+		);
 	};
 
 	const addToAppleWallet = () => {
-		applePass.mutate(me.id, {
-			onSuccess: (blob) => {
-				const url = URL.createObjectURL(blob);
-				const a = document.createElement("a");
-				a.href = url;
-				a.download = "hackpsu.pkpass";
-				a.click();
-				URL.revokeObjectURL(url);
-			},
-			onError: () => toast.error("Couldn't create an Apple Wallet pass."),
-		});
+		applePass.mutate(
+			{ id: me.id },
+			{
+				onSuccess: (blob) => {
+					const url = URL.createObjectURL(blob);
+					const a = document.createElement("a");
+					a.href = url;
+					a.download = "hackpsu.pkpass";
+					a.click();
+					URL.revokeObjectURL(url);
+				},
+				onError: () => toast.error("Couldn't create an Apple Wallet pass."),
+			}
+		);
 	};
 
 	return (
@@ -115,7 +128,15 @@ export default function HackerPass() {
 					*/}
 					{me.registration ? (
 						<>
-							<Stat label="Status" value={me.registration.applicationStatus} />
+							{/*
+							  The document marks applicationStatus optional, but the column is
+							  NOT NULL defaulting to "pending" and the entity initializes it,
+							  so the fallback is unreachable in practice.
+							*/}
+							<Stat
+								label="Status"
+								value={me.registration.applicationStatus ?? "pending"}
+							/>
 							<Stat label="Year" value={me.registration.academicYear} />
 						</>
 					) : (

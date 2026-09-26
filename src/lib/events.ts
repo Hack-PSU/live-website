@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { EventType } from "@/lib/api/event";
+import { EventType } from "@hackpsu/react-sdk";
 
 /** Everything in the design is quoted in the venue's timezone. */
 export const EVENT_TZ = "America/New_York";
@@ -78,8 +78,8 @@ export interface LiveEvent {
 }
 
 /**
- * Both GET /events (EventEntityResponse) and GET /hackathons/active/static
- * (StaticEventEntity) satisfy this — the latter types `type` as a plain string.
+ * The fields of an event this module needs, which is a subset of the API's
+ * EventEntity so both GET /events and GET /hackathons/active/static satisfy it.
  */
 export interface ApiEventLike {
 	id: string;
@@ -88,10 +88,23 @@ export interface ApiEventLike {
 	startTime: number;
 	endTime: number;
 	description?: string | null;
-	location?: { name: string } | null;
+	locationId?: number;
 }
 
-export function toLiveEvents(events: ApiEventLike[]): LiveEvent[] {
+/**
+ * Turns API events into the shape the UI renders.
+ *
+ * Location names are resolved by the caller from GET /locations rather than read
+ * off the event. The static hackathon response does join the location in, but
+ * the API documents `events` as plain EventEntity, which carries only
+ * `locationId`, so the joined object is not part of the typed contract. Looking
+ * the name up keeps this to documented fields, and matches how
+ * frontend-template pairs locationId with useLocationGetAll.
+ */
+export function toLiveEvents(
+	events: ApiEventLike[],
+	resolveLocation: (locationId?: number) => string
+): LiveEvent[] {
 	return events
 		.map((e) => ({
 			id: e.id,
@@ -99,7 +112,7 @@ export function toLiveEvents(events: ApiEventLike[]): LiveEvent[] {
 			type: e.type,
 			startTime: e.startTime,
 			endTime: e.endTime,
-			locationName: e.location?.name ?? "TBA",
+			locationName: resolveLocation(e.locationId),
 			description: e.description ?? undefined,
 		}))
 		.sort((a, b) => a.startTime - b.startTime);
