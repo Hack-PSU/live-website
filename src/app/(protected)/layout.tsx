@@ -1,7 +1,7 @@
 import { Toaster } from "sonner";
 
 import LiveHeader from "@/components/live/LiveHeader";
-import { AuthGuard, Role } from "@/lib/providers/AuthGuard";
+import { AuthGuard, Role } from "@hackpsu/react-sdk";
 
 export default function ProtectedLayout({
 	children,
@@ -12,7 +12,7 @@ export default function ProtectedLayout({
 		<div className="min-h-screen bg-ink text-foam">
 			<LiveHeader />
 			<Toaster richColors theme="dark" />
-			<AuthGuard config={{ minimumRole: Role.NONE }}>
+			<AuthGuard minimumRole={Role.NONE}>
 				<div className="min-w-0">{children}</div>
 			</AuthGuard>
 		</div>

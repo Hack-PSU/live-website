@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, DM_Sans, Orbitron } from "next/font/google";
 
-import LayoutProvider from "@/lib/providers/LayoutProvider";
+import { HackPSUProvider } from "@hackpsu/react-sdk";
 import "@/styles/globals.css";
 
 const barlow = Barlow_Condensed({
@@ -68,7 +68,26 @@ export default function RootLayout({
 			className={`${barlow.variable} ${dmSans.variable} ${orbitron.variable}`}
 		>
 			<body className="font-sans antialiased">
-				<LayoutProvider>{children}</LayoutProvider>
+				<HackPSUProvider
+					config={{
+						firebase: {
+							apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+							authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN!,
+							databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+							projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID!,
+							storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET!,
+							messagingSenderId:
+								process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
+							appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
+						},
+						apiBaseUrl: process.env.NEXT_PUBLIC_BASE_URL_V3!,
+						authServiceUrl: process.env.NEXT_PUBLIC_AUTH_SERVICE_URL,
+					}}
+					// Most of this site is public; /pass gates itself in its own layout.
+					guard={false}
+				>
+					{children}
+				</HackPSUProvider>
 			</body>
 		</html>
 	);
