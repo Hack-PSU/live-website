@@ -12,9 +12,15 @@ import {
 } from "react";
 import { type Auth, type User, signOut } from "firebase/auth";
 import { auth } from "@/lib/config/firebase";
+import {
+	captureSessionToken,
+	clearSessionToken,
+	withSessionAuth,
+} from "./session-token";
 
-// Helper function to get auth service URL from environment
-function getAuthServiceURL(): string {
+// Helper function to get auth service URL from environment. AuthGuard uses it
+// too: the server that signs you in must be the one that verifies the session.
+export function getAuthServiceURL(): string {
 	// Use environment variable if set, otherwise default to production
 	return process.env.NEXT_PUBLIC_AUTH_SERVICE_URL || "https://auth.hackpsu.org";
 }
@@ -53,13 +59,18 @@ export const FirebaseProvider: FC<Props> = ({ children }) => {
 		const authServiceURL = getAuthServiceURL();
 		console.log("Verifying session with:", authServiceURL);
 
+		// On localhost and Vercel previews the auth cookie is unreadable, so the
+		// auth service hands back a token in the redirect instead. Pick it up
+		// before asking about the session. (Ported from @hackpsu/react-sdk, #944.)
+		captureSessionToken();
+
 		try {
 			const response = await fetch(`${authServiceURL}/api/sessionUser`, {
 				method: "GET",
 				credentials: "include",
-				headers: {
+				headers: withSessionAuth({
 					"Content-Type": "application/json",
-				},
+				}),
 			});
 
 			console.log("Session verification response:", response.status);
@@ -138,10 +149,12 @@ export const FirebaseProvider: FC<Props> = ({ children }) => {
 			await fetch(`${authServiceURL}/api/sessionLogout`, {
 				method: "POST",
 				credentials: "include",
-				headers: {
+				headers: withSessionAuth({
 					"Content-Type": "application/json",
-				},
+				}),
 			});
+
+			clearSessionToken();
 
 			// Sign out from Firebase
 			console.log("Signing out from Firebase...");

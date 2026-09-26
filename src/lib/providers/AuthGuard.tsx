@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState, useRef, type ReactNode } from "react";
-import { useFirebase } from "@/lib/providers/FirebaseProvider";
+import {
+	getAuthServiceURL,
+	useFirebase,
+} from "@/lib/providers/FirebaseProvider";
 import { jwtDecode } from "jwt-decode";
 
 // Internal role definitions (used for permission checking only)
@@ -28,7 +31,7 @@ interface SimpleAuthGuardProps {
 }
 
 const defaultConfig: Required<SimpleAuthGuardConfig> = {
-	authServerUrl: "https://auth.hackpsu.org",
+	authServerUrl: getAuthServiceURL(),
 	redirectMode: "immediate",
 	showLoadingScreen: true,
 	loadingTimeout: 8000,
