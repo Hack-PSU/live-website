@@ -121,11 +121,6 @@ export default function HackerPass() {
 					/>
 				</div>
 				<div className="flex min-w-0 flex-col gap-2.5 text-sm text-slate-light">
-					{/*
-					  TODO(apiv3): check-in time and meal counts live in the scan data
-					  (/scans/analytics/events) but there is no per-user rollup endpoint.
-					  Wire those two stats once one exists.
-					*/}
 					{me.registration ? (
 						<>
 							{/*
