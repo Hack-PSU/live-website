@@ -24,7 +24,9 @@ export function useMyTeam(uid?: string) {
 
 	const team = useMemo(() => {
 		if (!uid || !data) return undefined;
-		return data.find((t) => memberIds(t).includes(uid));
+		// Deleted teams are soft-deleted (isActive: false) but still returned, with
+		// their members intact.
+		return data.find((t) => t.isActive && memberIds(t).includes(uid));
 	}, [data, uid]);
 
 	return { team, isLoading, isError };
