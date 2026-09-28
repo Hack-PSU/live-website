@@ -144,12 +144,7 @@ marked with a `TODO` at the relevant file.
   `src/lib/discord.ts` into apiv3 as `GET /announcements`. Then
   `src/lib/api/announcement/provider.ts` switches to `apiFetch`, and
   `src/app/api/announcements/` and the `DISCORD_*` env vars here go away.
-- **No `ceremony` event type.** apiv3's `EventType` is
-  `activity | food | workshop | checkIn`, but the design treats ceremonies as
-  their own category. `src/lib/events.ts` recognizes them by name as a stopgap.
 - **No "my team" lookup.** `GET /teams/:id` needs a team id and users carry no
   `teamId`, so `src/lib/hooks/use-my-team.ts` scans the team list.
 - **Floor plans are placeholders.** Drop real ECoRE SVGs into
   `public/floors/` and render them in `FloorMap.tsx`.
-- **Check-in time and meal counts** aren't on the pass — the data is in scans,
-  but there's no per-user rollup endpoint.

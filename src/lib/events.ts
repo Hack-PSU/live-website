@@ -4,8 +4,7 @@ import { EventType } from "@hackpsu/react-sdk";
 /** Everything in the design is quoted in the venue's timezone. */
 export const EVENT_TZ = "America/New_York";
 
-export type CategoryKey =
-	"checkIn" | "workshop" | "food" | "ceremony" | "activity";
+export type CategoryKey = "checkIn" | "workshop" | "food" | "activity";
 
 export interface Category {
 	key: CategoryKey;
@@ -18,7 +17,6 @@ export const CATEGORIES: Record<CategoryKey, Category> = {
 	checkIn: { key: "checkIn", label: "Check-in", color: "#7088B8" },
 	workshop: { key: "workshop", label: "Workshop", color: "#64A5C3" },
 	food: { key: "food", label: "Food", color: "#E07050" },
-	ceremony: { key: "ceremony", label: "Ceremony", color: "#E2C75E" },
 	activity: { key: "activity", label: "Activity", color: "#B6663C" },
 };
 
@@ -26,34 +24,13 @@ export const CATEGORY_ORDER: CategoryKey[] = [
 	"checkIn",
 	"workshop",
 	"food",
-	"ceremony",
 	"activity",
 ];
-
-/*
- * TODO(apiv3): the design has a fifth category, "Ceremony", but apiv3's
- * EventType enum only has activity | food | workshop | checkIn. Until a
- * `ceremony` value exists we recognize the handful of ceremony events by name.
- * This is the only place that guesses — delete it once the enum grows.
- */
-const CEREMONY_PATTERNS = [
-	/opening/i,
-	/closing/i,
-	/hacking begins/i,
-	/submissions? close/i,
-	/awards?/i,
-];
-
-function isCeremony(name: string): boolean {
-	return CEREMONY_PATTERNS.some((re) => re.test(name));
-}
 
 export function categoryOf(event: {
 	name: string;
 	type: EventType | string;
 }): Category {
-	if (isCeremony(event.name)) return CATEGORIES.ceremony;
-
 	switch (event.type) {
 		case EventType.food:
 			return CATEGORIES.food;
