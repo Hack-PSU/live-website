@@ -46,13 +46,33 @@ export default function TeamCard() {
 						) : (
 							"Devpost: not submitted"
 						)}
+						<br />
+						<a
+							href={settings.links.team}
+							target="_blank"
+							rel="noopener"
+							className="text-foam hover:text-ember"
+						>
+							Manage team ↗
+						</a>
 					</div>
 				</div>
+			) : isError ? (
+				<p className="m-0 text-sm text-slate-light">
+					Couldn&apos;t load your team right now.
+				</p>
 			) : (
 				<p className="m-0 text-sm text-slate-light">
-					{isError
-						? "Couldn't load your team right now."
-						: "You're not on a team yet — grab teammates and register one."}
+					You&apos;re not on a team yet — grab teammates and{" "}
+					<a
+						href={settings.links.team}
+						target="_blank"
+						rel="noopener"
+						className="text-foam hover:text-ember"
+					>
+						register one ↗
+					</a>
+					.
 				</p>
 			)}
 

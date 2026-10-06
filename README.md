@@ -144,7 +144,5 @@ marked with a `TODO` at the relevant file.
   `src/lib/discord.ts` into apiv3 as `GET /announcements`. Then
   `src/lib/api/announcement/provider.ts` switches to `apiFetch`, and
   `src/app/api/announcements/` and the `DISCORD_*` env vars here go away.
-- **No "my team" lookup.** `GET /teams/:id` needs a team id and users carry no
-  `teamId`, so `src/lib/hooks/use-my-team.ts` scans the team list.
 - **Floor plans are placeholders.** Drop real ECoRE SVGs into
   `public/floors/` and render them in `FloorMap.tsx`.
