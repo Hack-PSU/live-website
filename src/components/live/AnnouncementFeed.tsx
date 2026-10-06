@@ -1,18 +1,58 @@
 "use client";
 
+import { useState } from "react";
 import { DateTime } from "luxon";
 import DiscordText from "./DiscordText";
 import Hex from "./Hex";
 import { useAnnouncements } from "@/lib/api/announcement";
 import { EVENT_TZ } from "@/lib/events";
 import settings from "@/lib/config/settings.json";
+import type { AnnouncementEntity } from "@/lib/api/announcement";
+
+/** How many announcements show before the "older" toggle. */
+const VISIBLE_COUNT = 3;
 
 function postedAt(ms: number, today: DateTime): string {
 	const dt = DateTime.fromMillis(ms, { zone: EVENT_TZ });
 	return dt.toFormat(dt.hasSame(today, "day") ? "h:mm a" : "ccc h:mm a");
 }
 
+function AnnouncementPanel({
+	announcement: a,
+	latest,
+	today,
+}: {
+	announcement: AnnouncementEntity;
+	latest: boolean;
+	today: DateTime;
+}) {
+	return (
+		<article
+			className={`rounded-2xl border bg-surface px-5.5 py-5 ${
+				latest ? "border-ember/60" : "border-line"
+			}`}
+		>
+			<div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+				<Hex size={12} color={latest ? "#E07050" : "#7088B8"} />
+				{a.title && (
+					<h3 className="m-0 text-[17px] font-bold text-foam">{a.title}</h3>
+				)}
+				<span className="font-mono text-[11px] text-slate">
+					{postedAt(a.timestamp, today)} · {a.author}
+					{a.editedTimestamp && " · edited"}
+				</span>
+			</div>
+			{a.body && (
+				<div className="mt-2 max-w-[62ch] text-[15px] leading-[1.55] text-slate-light [overflow-wrap:anywhere] [text-wrap:pretty]">
+					<DiscordText text={a.body} />
+				</div>
+			)}
+		</article>
+	);
+}
+
 export default function AnnouncementFeed() {
+	const [showOlder, setShowOlder] = useState(false);
 	const { data, isLoading, isError } = useAnnouncements();
 	const announcements = data ?? [];
 	const today = DateTime.now().setZone(EVENT_TZ);
@@ -20,6 +60,9 @@ export default function AnnouncementFeed() {
 	const todayCount = announcements.filter((a) =>
 		DateTime.fromMillis(a.timestamp, { zone: EVENT_TZ }).hasSame(today, "day")
 	).length;
+
+	const recent = announcements.slice(0, VISIBLE_COUNT);
+	const older = announcements.slice(VISIBLE_COUNT);
 
 	return (
 		<div>
@@ -42,45 +85,47 @@ export default function AnnouncementFeed() {
 				</a>
 			</div>
 
-			<div className="mt-4.5 border-l-2 border-line">
-				{isLoading && (
-					<p className="pl-6 text-[15px] text-slate-light">Loading…</p>
-				)}
+			<div className="mt-4.5 flex flex-col gap-3">
+				{isLoading && <p className="text-[15px] text-slate-light">Loading…</p>}
 				{isError && (
-					<p className="pl-6 text-[15px] text-slate-light">
+					<p className="text-[15px] text-slate-light">
 						Announcements aren&apos;t loading right now — check the Discord.
 					</p>
 				)}
 				{!isLoading && !isError && announcements.length === 0 && (
-					<p className="pl-6 text-[15px] text-slate-light">
-						Nothing announced yet.
-					</p>
+					<p className="text-[15px] text-slate-light">Nothing announced yet.</p>
 				)}
-				{announcements.map((a, i) => (
-					<div key={a.id} className="relative pb-5.5 pl-6">
-						<Hex
-							size={12}
-							color={i === 0 ? "#E07050" : "#7088B8"}
-							className="absolute left-[-7px] top-1"
-						/>
-						<div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-							{a.title && (
-								<h3 className="m-0 text-[17px] font-bold text-foam">
-									{a.title}
-								</h3>
-							)}
-							<span className="font-mono text-[11px] text-slate">
-								{postedAt(a.timestamp, today)} · {a.author}
-								{a.editedTimestamp && " · edited"}
-							</span>
-						</div>
-						{a.body && (
-							<div className="mt-1.5 max-w-[62ch] text-[15px] leading-[1.55] text-slate-light [overflow-wrap:anywhere] [text-wrap:pretty]">
-								<DiscordText text={a.body} />
-							</div>
-						)}
-					</div>
+				{recent.map((a, i) => (
+					<AnnouncementPanel
+						key={a.id}
+						announcement={a}
+						latest={i === 0}
+						today={today}
+					/>
 				))}
+				{older.length > 0 && (
+					<>
+						<button
+							type="button"
+							onClick={() => setShowOlder((v) => !v)}
+							aria-expanded={showOlder}
+							className="self-start font-condensed text-[15px] font-semibold uppercase tracking-[.1em] text-ember hover:text-ember-light"
+						>
+							{showOlder
+								? "Hide older announcements ▴"
+								: `See ${older.length} older announcement${older.length === 1 ? "" : "s"} ▾`}
+						</button>
+						{showOlder &&
+							older.map((a) => (
+								<AnnouncementPanel
+									key={a.id}
+									announcement={a}
+									latest={false}
+									today={today}
+								/>
+							))}
+					</>
+				)}
 			</div>
 		</div>
 	);
