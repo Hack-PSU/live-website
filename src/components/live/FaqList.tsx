@@ -25,17 +25,20 @@ export default function FaqList() {
 	return (
 		<div className="mt-5.5 flex flex-col gap-3">
 			{FAQS.map((faq) => (
-				<div
+				<details
 					key={faq.q}
-					className="rounded-2xl border border-line bg-surface px-5.5 py-5"
+					className="group rounded-2xl border border-line bg-surface px-5.5 py-5"
 				>
-					<h3 className="m-0 font-condensed text-2xl font-semibold uppercase text-foam">
+					<summary className="flex cursor-pointer list-none items-center gap-3 font-condensed text-2xl font-semibold uppercase text-foam [&::-webkit-details-marker]:hidden">
+						<span className="inline-block transition-transform group-open:rotate-90">
+							▸
+						</span>
 						{faq.q}
-					</h3>
+					</summary>
 					<p className="m-0 mt-2 text-[15px] leading-[1.55] text-slate-light [text-wrap:pretty]">
 						{faq.a}
 					</p>
-				</div>
+				</details>
 			))}
 		</div>
 	);
