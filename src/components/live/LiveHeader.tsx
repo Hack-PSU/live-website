@@ -29,67 +29,73 @@ export default function LiveHeader() {
 	const now = useLiveClock();
 
 	return (
-		<header className="sticky top-0 z-30 flex flex-wrap items-stretch gap-x-5 border-b border-line bg-ink-deep px-7">
-			<Link href="/" className="flex items-center gap-2.5 py-2.5">
-				<Image
-					src="/hackpsu-logo.png"
-					alt="HackPSU"
-					width={38}
-					height={38}
-					priority
-					className="h-[38px] w-[38px] flex-none object-contain"
-				/>
-				<span className="block">
-					<span className="block font-condensed text-[19px] font-bold uppercase leading-none tracking-[.06em] text-foam">
-						HackPSU
+		<header className="sticky top-0 z-30 border-b border-line bg-ink-deep">
+			<div className="mx-auto flex max-w-[1180px] flex-wrap items-stretch gap-x-5 px-5 md:px-10">
+				<Link href="/" className="flex items-center gap-2.5 py-2.5">
+					<Image
+						src="/hackpsu-logo.png"
+						alt="HackPSU"
+						width={38}
+						height={38}
+						priority
+						className="h-[38px] w-[38px] flex-none object-contain"
+					/>
+					<span className="block">
+						<span className="block font-condensed text-[19px] font-bold uppercase leading-none tracking-[.06em] text-foam">
+							HackPSU
+						</span>
+						<span className="mt-[3px] block font-mono text-[9px] font-bold tracking-[.26em] text-ember">
+							LIVE
+						</span>
 					</span>
-					<span className="mt-[3px] block font-mono text-[9px] font-bold tracking-[.26em] text-ember">
-						LIVE
-					</span>
-				</span>
-			</Link>
+				</Link>
 
-			<nav className="order-3 flex min-w-0 flex-[1_1_100%] flex-wrap items-stretch gap-0.5">
-				{NAV.map((item) => {
-					const active =
-						item.href === "/"
-							? pathname === "/"
-							: pathname.startsWith(item.href);
-					return (
-						<Link
-							key={item.href}
-							href={item.href}
-							className={navItemClasses(active)}
-						>
-							<Hex size={11} color={active ? "#E07050" : "#7088B8"} />
-							{item.label}
-						</Link>
-					);
-				})}
-				<a
-					href={settings.links.discord}
-					target="_blank"
-					rel="noopener"
-					className={cn(navItemClasses(false), "border-transparent")}
-				>
-					<Hex size={11} />
-					Get help ↗
-				</a>
-			</nav>
+				{/* Scrolls sideways on phones rather than wrapping into a tall sticky block. */}
+				<nav className="no-scrollbar order-3 -mx-5 flex min-w-0 flex-[1_1_100%] items-stretch gap-0.5 overflow-x-auto px-5 md:mx-0 md:flex-wrap md:px-0">
+					{NAV.map((item) => {
+						const active =
+							item.href === "/"
+								? pathname === "/"
+								: pathname.startsWith(item.href);
+						return (
+							<Link
+								key={item.href}
+								href={item.href}
+								className={navItemClasses(active)}
+							>
+								<Hex size={11} color={active ? "#E07050" : "#7088B8"} />
+								{item.label}
+							</Link>
+						);
+					})}
+					<a
+						href={settings.links.discord}
+						target="_blank"
+						rel="noopener"
+						className={cn(navItemClasses(false), "border-transparent")}
+					>
+						<Hex size={11} />
+						Get help ↗&#xFE0E;
+					</a>
+				</nav>
 
-			<div className="ml-auto flex flex-wrap items-center gap-x-[18px] gap-y-2 py-2.5 text-[13px] text-slate-light">
-				<span className="flex items-center gap-2">
-					<Hex size={8} color="#E07050" blink />
-					<span className="font-mono text-[10px] font-bold tracking-[.2em] text-ember">
-						{now === null ? "--:-- ET" : formatClock(now)}
+				<div className="ml-auto flex flex-wrap items-center gap-x-[18px] gap-y-2 py-2.5 text-[13px] text-slate-light">
+					<span className="flex items-center gap-2">
+						<Hex size={8} color="#E07050" blink />
+						<span className="font-mono text-[10px] font-bold tracking-[.2em] text-ember">
+							{now === null ? "--:-- ET" : formatClock(now)}
+						</span>
 					</span>
-				</span>
-				<span>
-					Wi-Fi <strong className="text-foam">{settings.wifi}</strong>
-				</span>
-				<a href={settings.links.main} className="text-slate hover:text-foam">
-					hackpsu.org ↗
-				</a>
+					<span>
+						Wi-Fi <strong className="text-foam">{settings.wifi}</strong>
+					</span>
+					<a
+						href={settings.links.main}
+						className="hidden text-slate hover:text-foam sm:inline"
+					>
+						hackpsu.org ↗&#xFE0E;
+					</a>
+				</div>
 			</div>
 		</header>
 	);

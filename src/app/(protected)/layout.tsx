@@ -13,7 +13,7 @@ export default function ProtectedLayout({
 			<LiveHeader />
 			<Toaster richColors theme="dark" />
 			<AuthGuard minimumRole={Role.NONE}>
-				<div className="min-w-0">{children}</div>
+				<div className="mx-auto min-w-0 max-w-[1180px]">{children}</div>
 			</AuthGuard>
 		</div>
 	);

@@ -39,7 +39,7 @@ export default function TeamCard() {
 								rel="noopener"
 								className="text-foam hover:text-ember"
 							>
-								Submitted: {project.name} ↗
+								Submitted: {project.name} ↗&#xFE0E;
 							</a>
 						) : project ? (
 							<>Project: {project.name}</>
@@ -53,7 +53,7 @@ export default function TeamCard() {
 							rel="noopener"
 							className="text-foam hover:text-ember"
 						>
-							Manage team ↗
+							Manage team ↗&#xFE0E;
 						</a>
 					</div>
 				</div>
@@ -70,7 +70,7 @@ export default function TeamCard() {
 						rel="noopener"
 						className="text-foam hover:text-ember"
 					>
-						register one ↗
+						register one ↗&#xFE0E;
 					</a>
 					.
 				</p>

@@ -20,7 +20,7 @@ export default function QuickLinks() {
 						rel="noopener"
 						className="flex justify-between text-[15px] font-medium text-foam hover:text-ember"
 					>
-						{link.label} <span className="text-slate">↗</span>
+						{link.label} <span className="text-slate">↗&#xFE0E;</span>
 					</a>
 				) : (
 					<Link

@@ -97,30 +97,30 @@ export default function ScheduleTimeline({ events, isLoading }: Props) {
 					return (
 						<div
 							key={event.id}
-							className="grid grid-cols-[72px_minmax(0,1fr)] gap-5 pb-3.5 sm:grid-cols-[96px_minmax(0,1fr)]"
+							className="grid grid-cols-[68px_minmax(0,1fr)] gap-3 pb-3.5 sm:grid-cols-[96px_minmax(0,1fr)] sm:gap-5"
 						>
 							<div className="pt-4.5 text-right font-mono text-[13px] font-medium text-slate">
 								{formatTime(event.startTime)}
 							</div>
-							<div className="relative border-l border-line pl-5">
+							<div className="relative border-l border-line pl-4 sm:pl-5">
 								<Hex
 									size={11}
 									color={category.color}
 									className="absolute left-[-6px] top-5.5"
 								/>
-								<div className="flex items-center gap-4.5 rounded-xl border border-line bg-surface px-4.5 py-3.5">
-									<div className="min-w-0 flex-1">
+								<div className="flex flex-col gap-1.5 rounded-xl border border-line bg-surface px-4 py-3.5 sm:flex-row sm:items-center sm:gap-4.5 sm:px-4.5">
+									<div className="w-full min-w-0 flex-1">
 										<div
 											className="font-mono text-[10px] font-bold uppercase tracking-[.2em]"
 											style={{ color: category.color }}
 										>
 											{category.label}
 										</div>
-										<h3 className="m-0 mt-1.5 font-condensed text-[25px] font-semibold uppercase leading-[1.05] text-foam">
+										<h3 className="m-0 mt-1.5 font-condensed text-[21px] font-semibold uppercase leading-[1.05] text-foam [overflow-wrap:anywhere] sm:text-[25px]">
 											{event.name}
 										</h3>
 									</div>
-									<div className="flex-none text-right text-sm text-slate-light">
+									<div className="text-sm text-slate-light sm:flex-none sm:text-right">
 										{event.locationName}
 									</div>
 								</div>

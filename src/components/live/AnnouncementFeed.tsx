@@ -81,7 +81,7 @@ export default function AnnouncementFeed() {
 					rel="noopener"
 					className="ml-auto font-condensed text-[15px] font-semibold uppercase tracking-[.1em] text-ember hover:text-ember-light"
 				>
-					Discord ↗
+					Discord ↗&#xFE0E;
 				</a>
 			</div>
 

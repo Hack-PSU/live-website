@@ -8,7 +8,7 @@ export default function DefaultLayout({
 	return (
 		<div className="min-h-screen bg-ink text-foam">
 			<LiveHeader />
-			<div className="min-w-0">{children}</div>
+			<div className="mx-auto min-w-0 max-w-[1180px]">{children}</div>
 		</div>
 	);
 }

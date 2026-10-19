@@ -88,7 +88,7 @@ export default function HackerPass() {
 	};
 
 	return (
-		<div className="relative mt-5 overflow-hidden rounded-[20px] border border-line bg-[linear-gradient(150deg,#10384F,#0A1E2E)] p-6.5">
+		<div className="relative mt-5 overflow-hidden rounded-[20px] border border-line bg-[linear-gradient(150deg,#10384F,#0A1E2E)] p-5 sm:p-6.5">
 			<div className="hex absolute -right-10 -top-10 h-[200px] w-[180px] bg-ember/[.16]" />
 
 			<div className="relative flex items-center gap-3.5">
@@ -104,7 +104,7 @@ export default function HackerPass() {
 				</div>
 			</div>
 
-			<h2 className="relative mb-1 mt-4.5 font-condensed text-[42px] font-bold uppercase leading-none text-foam">
+			<h2 className="relative mb-1 mt-4.5 font-condensed text-[42px] font-bold uppercase leading-none text-foam [overflow-wrap:anywhere]">
 				{me.firstName} {me.lastName}
 			</h2>
 			<p className="relative m-0 text-[15px] text-slate-light">
@@ -138,7 +138,7 @@ export default function HackerPass() {
 						<div>Not registered for {settings.hackathonName}</div>
 					)}
 					<Stat label="Team" value={team?.name ?? "No team"} />
-					<div className="font-mono text-xs text-slate">{me.id}</div>
+					<div className="break-all font-mono text-xs text-slate">{me.id}</div>
 				</div>
 			</div>
 
