@@ -1,3 +1,5 @@
+import StillStuck from "./StillStuck";
+
 const FAQS = [
 	{
 		q: "Where do I go for help?",
@@ -23,23 +25,27 @@ const FAQS = [
 
 export default function FaqList() {
 	return (
-		<div className="mt-5.5 flex flex-col gap-3">
-			{FAQS.map((faq) => (
-				<details
-					key={faq.q}
-					className="group rounded-2xl border border-line bg-surface px-5.5 py-5"
-				>
-					<summary className="flex cursor-pointer list-none items-center gap-3 font-condensed text-2xl font-semibold uppercase text-foam [&::-webkit-details-marker]:hidden">
-						<span className="inline-block transition-transform group-open:rotate-90">
-							▸
-						</span>
-						{faq.q}
-					</summary>
-					<p className="m-0 mt-2 text-[15px] leading-[1.55] text-slate-light [text-wrap:pretty]">
-						{faq.a}
-					</p>
-				</details>
-			))}
+		<div className="mt-5.5 grid grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+			<div className="flex flex-col gap-3">
+				{FAQS.map((faq) => (
+					<details
+						key={faq.q}
+						className="group rounded-2xl border border-line bg-surface px-5.5 py-5"
+					>
+						<summary className="flex cursor-pointer list-none items-center gap-3 font-condensed text-2xl font-semibold uppercase text-foam [&::-webkit-details-marker]:hidden">
+							<span className="inline-block transition-transform group-open:rotate-90">
+								▸
+							</span>
+							{faq.q}
+						</summary>
+						<p className="m-0 mt-2 text-[15px] leading-[1.55] text-slate-light [text-wrap:pretty]">
+							{faq.a}
+						</p>
+					</details>
+				))}
+			</div>
+
+			<StillStuck />
 		</div>
 	);
 }
