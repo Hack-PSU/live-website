@@ -9,13 +9,13 @@ interface Props {
 }
 
 function SponsorTile({ sponsor }: { sponsor: SponsorEntity }) {
-	// Same preference as frontend-template's sponsor section.
-	const logo = sponsor.darkLogo || sponsor.lightLogo;
+	// Tiles are beige, so the light-background logo reads best.
+	const logo = sponsor.lightLogo || sponsor.darkLogo;
 	// Dead logo URLs fall back to the name instead of a broken-image icon.
 	const [broken, setBroken] = useState(false);
 
 	const body = (
-		<div className="flex h-24 items-center justify-center rounded-xl border border-line bg-surface px-4 py-3">
+		<div className="flex h-24 items-center justify-center rounded-xl bg-cream px-4 py-3">
 			{logo && !broken ? (
 				// Logos are hosted wherever organizers uploaded them, so skip the
 				// next/image host allowlist.
@@ -28,7 +28,7 @@ function SponsorTile({ sponsor }: { sponsor: SponsorEntity }) {
 					className="max-h-full max-w-full object-contain"
 				/>
 			) : (
-				<span className="text-center font-condensed text-xl font-semibold uppercase text-foam">
+				<span className="text-center font-condensed text-xl font-semibold uppercase text-ink">
 					{sponsor.name}
 				</span>
 			)}

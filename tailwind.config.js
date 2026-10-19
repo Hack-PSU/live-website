@@ -31,6 +31,8 @@ module.exports = {
 				gold: "#E2C75E",
 				sky: "#64A5C3",
 				clay: "#B6663C",
+				// beige the main hackpsu.org site uses behind sponsor logos
+				cream: "#EAE3CF",
 				// hairline used on every card/divider in the design
 				line: "rgba(112,136,184,.22)",
 				"line-strong": "rgba(112,136,184,.45)",
