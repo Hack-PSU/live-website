@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 		title: "HackPSU Live",
 		description:
 			"Live schedule, announcements, floor map, and your hacker pass for HackPSU at Penn State.",
-		images: [{ url: "/hackpsu-logo.png", alt: "HackPSU" }],
+		images: [{ url: "/hackpsu-logo1.png", alt: "HackPSU" }],
 	},
 	robots: { index: true, follow: true },
 	category: "technology",

@@ -4,7 +4,7 @@ import settings from "@/lib/config/settings.json";
 const LINKS = [
 	{ label: "Discord", href: settings.links.discord, external: true },
 	{ label: "Devpost", href: settings.links.devpost, external: true },
-	{ label: "Floor map", href: "/map", external: false },
+	//{ label: "Floor map", href: "/map", external: false },
 	{ label: "FAQ & rules", href: "/help", external: false },
 ];
 

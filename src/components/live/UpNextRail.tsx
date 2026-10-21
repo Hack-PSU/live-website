@@ -41,9 +41,7 @@ export default function UpNextRail({ events, now }: Props) {
 						<div className="flex flex-wrap items-center gap-2.5 font-mono text-xs font-medium text-slate">
 							<Hex size={10} color={categoryOf(event).color} />
 							<span>{formatTime(event.startTime)}</span>
-							<span className="ml-auto uppercase tracking-[.1em] text-ember">
-								{now === null ? "" : formatEta(now, event.startTime)}
-							</span>
+							
 						</div>
 						<div className="mt-[7px] font-condensed text-[22px] font-semibold uppercase leading-[1.12] text-foam">
 							{event.name}

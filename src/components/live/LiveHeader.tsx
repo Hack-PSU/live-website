@@ -12,7 +12,7 @@ import settings from "@/lib/config/settings.json";
 const NAV = [
 	{ href: "/", label: "Dashboard" },
 	{ href: "/schedule", label: "Schedule" },
-	{ href: "/map", label: "Floor map" },
+	//{ href: "/map", label: "Floor map" },
 	{ href: "/pass", label: "My pass" },
 ];
 
@@ -33,7 +33,7 @@ export default function LiveHeader() {
 			<div className="mx-auto flex max-w-[1180px] flex-wrap items-stretch gap-x-5 px-5 md:px-10">
 				<Link href="/" className="flex items-center gap-2.5 py-2.5">
 					<Image
-						src="/hackpsu-logo.png"
+						src="/logo.svg"
 						alt="HackPSU"
 						width={38}
 						height={38}

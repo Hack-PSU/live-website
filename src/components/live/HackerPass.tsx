@@ -93,7 +93,7 @@ export default function HackerPass() {
 
 			<div className="relative flex items-center gap-3.5">
 				<Image
-					src="/hackpsu-logo.png"
+					src="/logo.svg"
 					alt=""
 					width={38}
 					height={38}

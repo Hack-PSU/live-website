@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DateTime } from "luxon";
 import DiscordText from "./DiscordText";
 import Hex from "./Hex";
@@ -11,6 +11,11 @@ import type { AnnouncementEntity } from "@/lib/api/announcement";
 
 /** How many announcements show before the "older" toggle. */
 const VISIBLE_COUNT = 3;
+
+/** Bodies longer than this many lines collapse behind "See full post". */
+const BODY_LINES = 6;
+/** Must match the body's `leading-[1.55]`. */
+const LINE_HEIGHT_EM = 1.55;
 
 function postedAt(ms: number, today: DateTime): string {
 	const dt = DateTime.fromMillis(ms, { zone: EVENT_TZ });
@@ -26,6 +31,23 @@ function AnnouncementPanel({
 	latest: boolean;
 	today: DateTime;
 }) {
+	const bodyRef = useRef<HTMLDivElement>(null);
+	const [expanded, setExpanded] = useState(false);
+	const [overflows, setOverflows] = useState(false);
+
+	// Re-measure on resize: whether the body overflows depends on panel width.
+	useEffect(() => {
+		const el = bodyRef.current;
+		if (!el || expanded) return;
+		const measure = () => setOverflows(el.scrollHeight > el.clientHeight + 1);
+		measure();
+		const observer = new ResizeObserver(measure);
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, [a.body, expanded]);
+
+	const clamped = !expanded && overflows;
+
 	return (
 		<article
 			className={`rounded-2xl border bg-surface px-5.5 py-5 ${
@@ -43,9 +65,33 @@ function AnnouncementPanel({
 				</span>
 			</div>
 			{a.body && (
-				<div className="mt-2 max-w-[62ch] text-[15px] leading-[1.55] text-slate-light [overflow-wrap:anywhere] [text-wrap:pretty]">
-					<DiscordText text={a.body} />
-				</div>
+				<>
+					<div
+						ref={bodyRef}
+						style={
+							expanded
+								? undefined
+								: { maxHeight: `${BODY_LINES * LINE_HEIGHT_EM}em` }
+						}
+						className={`mt-2 max-w-[62ch] overflow-hidden text-[15px] leading-[1.55] text-slate-light [overflow-wrap:anywhere] [text-wrap:pretty] ${
+							clamped
+								? "[mask-image:linear-gradient(to_bottom,black_65%,transparent)]"
+								: ""
+						}`}
+					>
+						<DiscordText text={a.body} />
+					</div>
+					{(overflows || expanded) && (
+						<button
+							type="button"
+							onClick={() => setExpanded((v) => !v)}
+							aria-expanded={expanded}
+							className="mt-2 font-condensed text-[15px] font-semibold uppercase tracking-[.1em] text-ember hover:text-ember-light"
+						>
+							{expanded ? "Show less ▴" : "See full post ▾"}
+						</button>
+					)}
+				</>
 			)}
 		</article>
 	);

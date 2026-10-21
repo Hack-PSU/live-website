@@ -7,7 +7,7 @@ import QuickLinks from "@/components/live/QuickLinks";
 import SponsorWall from "@/components/live/SponsorWall";
 import TeamCard from "@/components/live/TeamCard";
 import UpNextRail from "@/components/live/UpNextRail";
-import { currentEvent, upcomingEvents } from "@/lib/events";
+import { currentEvent, isSponsorEvent, upcomingEvents } from "@/lib/events";
 import { useLiveClock } from "@/lib/hooks/use-live-clock";
 import { useLiveSchedule } from "@/lib/hooks/use-live-schedule";
 
@@ -17,7 +17,11 @@ export default function DashboardPage() {
 
 	const reference = now ?? startTime;
 	const onNow = currentEvent(events, reference);
-	const upNext = upcomingEvents(events, reference, 3);
+	const upNext = upcomingEvents(
+		events.filter((e) => !isSponsorEvent(e)),
+		reference,
+		3
+	);
 
 	return (
 		<main className="max-w-[1180px] px-5 pb-16 pt-8 md:px-10">

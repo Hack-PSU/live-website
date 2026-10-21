@@ -169,3 +169,8 @@ export function groupByDay(events: LiveEvent[]): EventDay[] {
 	}
 	return Array.from(days.values()).sort((a, b) => a.key.localeCompare(b.key));
 }
+
+/** Events named "... (Sponsor)" are hidden from the schedule and Up next rail. */
+export function isSponsorEvent(event: { name: string }): boolean {
+	return event.name.trim().endsWith("(Sponsor)");
+}
